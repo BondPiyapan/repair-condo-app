@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Locktech",
+    "slug": "repair-condo-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/appicon_spark-2.png",
+    "splash": {
+      "image": "./assets/splash1.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/appicon_spark-2.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.ballza95.repaircondoapp"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
