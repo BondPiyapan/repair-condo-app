@@ -131,7 +131,7 @@ export default class MainScreen extends React.Component {
       // ]
     }
 
-    user = this.props.navigation.getParam('user')
+    // user = this.props.navigation.getParam('user')
   }
 
   async retrieveUser(key) {
@@ -147,14 +147,16 @@ export default class MainScreen extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.retrieveUser("user").then((goals) => {
-      if (goals == 'user1') {
+      console.log('user', goals)
+      if (goals != null) {
         this.setState({
           dataUser: {
             idUser: 1,
-            name: 'สมรัก รักดี',
+            name: goals.firstName + '  ' + goals.lastName,
             roomNo: '101',
-            floor: '1'
-          }
+            floor: '1',
+          },
+          loader: false
         })
       }
     })
@@ -162,7 +164,9 @@ export default class MainScreen extends React.Component {
 
 
   render() {
-
+    if(this.state.loader){
+      return null
+    }
     return (
       <View style={styles.container}>
         <ScrollView showsVerticalScrollIndicator={true}>
@@ -195,7 +199,7 @@ export default class MainScreen extends React.Component {
                 color: '#000',
                 fontSize: hp('4%'),
                 fontFamily: 'sukhumvit-set-bold',
-              }}>สมรัก รักดี</Text>
+              }}>{this.state.dataUser.name}</Text>
           </View>
           <View style={{ alignItems: 'center', marginTop: 20 }}>
             <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: '#EA8741', alignItems: 'center', justifyContent: 'center' }}>
@@ -217,7 +221,7 @@ export default class MainScreen extends React.Component {
               style={[styles.button, styles.buttonMobile]}>
               <Text style={styles.buttonText}>แจ้งซ่อม</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}
+            <TouchableOpacity onPress={() => {this.props.navigation.navigate('Login'),AsyncStorage.setItem('user', JSON.stringify(null));}}
               style={[styles.button, styles.buttonMobile2]}>
               <Text style={styles.buttonText}>ออกจากระบบ</Text>
             </TouchableOpacity>

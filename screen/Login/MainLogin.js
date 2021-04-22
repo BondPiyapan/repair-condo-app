@@ -44,26 +44,35 @@ export default class MainLogin extends React.Component {
 
   async storeUser(userId) {
     try {
-        //we want to wait for the Promise returned by AsyncStorage.setItem()
-        //to be resolved to the actual value before returning the value
-        var jsonOfItem = await AsyncStorage.setItem('user', JSON.stringify(userId));
-        return jsonOfItem;
+      //we want to wait for the Promise returned by AsyncStorage.setItem()
+      //to be resolved to the actual value before returning the value
+      var jsonOfItem = await AsyncStorage.setItem('user', JSON.stringify(userId));
+      return jsonOfItem;
     } catch (error) {
-        console.log(error.message);
+      console.log(error.message);
     }
-}
+  }
 
-async onLogin(){
-  try {
-    await firebase
-       .auth()
-       .signInWithEmailAndPassword(this.state.username, this.state.password).then(
-         
-       );
-   } catch (err) {
-     Alert.alert("แจ้งเตือน", err.message);
-   }
-}
+  async onLogin() {
+    try {
+      await firebase
+        .auth()
+        .signInWithEmailAndPassword(this.state.username, this.state.password).then(
+          (res) =>
+            firebase.firestore()
+              .collection('users')
+              .doc(res.user.uid)
+              .onSnapshot(documentSnapshot => {
+                console.log('User data: ', documentSnapshot.data());
+                this.storeUser(documentSnapshot.data()).then(
+                  this.props.navigation.navigate('Main')
+                )
+              })
+        );
+    } catch (err) {
+      Alert.alert("แจ้งเตือน", err.message);
+    }
+  }
 
   render() {
 
@@ -165,8 +174,8 @@ async onLogin(){
               <Text style={styles.buttonText}>เข้าสู่ระบบ</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => {
-                this.props.navigation.navigate('RegisterScreen')
-              }
+              this.props.navigation.navigate('RegisterScreen')
+            }
             }
               style={[styles.button, styles.buttonMobile]}>
               <Text style={styles.buttonText}>สมัครสมาชิก</Text>

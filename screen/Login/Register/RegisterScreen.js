@@ -113,8 +113,8 @@ export default class RegisterScreen extends React.Component {
                 .doc(currentUser.uid)
                 .set({
                     email: currentUser.email,
-                    lastName: this.state.TextInputFullname,
-                    firstName: this.state.TextInputLastname,
+                    lastName: this.state.TextInputLastname,
+                    firstName: this.state.TextInputFullname,
                 }).then(
                     Alert.alert("แจ้งเตือน", "สมัครสมาชิกเรียบร้อย"),
                     this.props.navigation.goBack(null)
@@ -207,6 +207,26 @@ export default class RegisterScreen extends React.Component {
                                 <TextInput
                                     onChangeText={TextInputValue => this.onEnterTextLastname(TextInputValue)}
                                     placeholder={'กรอกนามสกุลของคุณ'}
+                                    style={{ padding: -10, fontFamily: 'sukhumvit-set', }}
+                                    underlineColorAndroid={'transparent'}
+                                    numberOfLines={1}
+                                />
+
+                                <View style={{ height: 1, backgroundColor: '#CED7DE', marginTop: 10, marginBottom: 10 }} />
+                            </View>
+
+                            <View style={{ marginBottom: 20 }}>
+                                {this.state.ErrorLastname == false ? (
+                                    <Text style={styles.errorMessage}>
+                                        เบอร์โทรศัพท์
+                                    </Text>
+                                ) :
+                                    <Text style={styles.headText}>เบอร์โทรศัพท์</Text>
+                                }
+
+                                <TextInput
+                                    onChangeText={TextInputValue => this.onEnterTextLastname(TextInputValue)}
+                                    placeholder={'กรอกเบอร์โทรศัพท์ของคุณ'}
                                     style={{ padding: -10, fontFamily: 'sukhumvit-set', }}
                                     underlineColorAndroid={'transparent'}
                                     numberOfLines={1}
