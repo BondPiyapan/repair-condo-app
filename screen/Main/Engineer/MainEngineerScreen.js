@@ -25,7 +25,7 @@ import * as Icon from '@expo/vector-icons'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Asset } from 'expo-asset';
 import firebase from 'firebase'; // 4.8.1
-export default class MainEngineerScreen extends React.Component {
+export default class ListRepairScreen extends React.Component {
 
 
   constructor() {
@@ -62,13 +62,27 @@ export default class MainEngineerScreen extends React.Component {
     firebase
       .database()
       .ref('dataRepair')
+      // .on('value', snapshot => {
+      //   let array = [];
+      //   snapshot.forEach(function (childSnapshot) {
+      //     // const key = childSnapshot.key;
+      //     const childData = childSnapshot.val();
+      //     console.log(childData);
+      //     array.push(childData);
+      //   });
+      //   this.setState({ dataRepair: array, loader: false });
+      // });
       .on('value', snapshot => {
         let array = [];
         snapshot.forEach(function (childSnapshot) {
-          // const key = childSnapshot.key;
+          const key = childSnapshot.key;
           const childData = childSnapshot.val();
-          console.log(childData);
-          array.push(childData);
+          const data = {
+            idOrder : key,
+            childData
+          }
+          console.log(data);
+          array.push(data);
         });
         this.setState({ dataRepair: array, loader: false });
       });
@@ -94,7 +108,7 @@ export default class MainEngineerScreen extends React.Component {
           <View style={{ flex: 0.2, padding: 10 }}>
             <Images
               width={width * .15}
-              source={{ uri: item.img }}
+              source={{ uri: item.childData.img }}
             />
           </View>
           <View style={{ justifyContent: 'flex-start', padding: 5, marginLeft: 40 }}>
@@ -103,31 +117,31 @@ export default class MainEngineerScreen extends React.Component {
                 color: '#000',
                 fontSize: hp('1.8%'),
                 fontFamily: 'sukhumvit-set-bold',
-              }}>คุณ {item.datauser.name}</Text>
+              }}>คุณ {item.childData.datauser.name}</Text>
             <Text
               style={{
                 color: '#000',
                 fontSize: hp('1.8%'),
                 fontFamily: 'sukhumvit-set-bold',
-              }}>ห้อง : {item.datauser.roomNo}</Text>
+              }}>ห้อง : {item.childData.datauser.roomNo}</Text>
             <Text
               style={{
                 color: '#000',
                 fontSize: hp('1.8%'),
                 fontFamily: 'sukhumvit-set-bold',
-              }}>ชั้น : {item.datauser.floor}</Text>
+              }}>ชั้น : {item.childData.datauser.floor}</Text>
             <Text
               style={{
                 color: '#000',
                 fontSize: hp('1.8%'),
                 fontFamily: 'sukhumvit-set-bold',
-              }}>ประเภท : {item.type}</Text>
+              }}>ประเภท : {item.childData.type}</Text>
             <Text
               style={{
                 color: '#000',
                 fontSize: hp('1.8%'),
                 fontFamily: 'sukhumvit-set-bold',
-              }}>วันที่เข้าซ่อม : {item.dateRepair}</Text>
+              }}>วันที่เข้าซ่อม : {item.childData.dateRepair}</Text>
             {/* {item.verify == true ?
               <Text
                 numberOfLines={1}

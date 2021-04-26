@@ -10,6 +10,8 @@ import MainScreenList from '../screen/Main/MainScreenList';
 import MainDetail from '../screen/Main/MainDetail';
 import RepairScreen from '../screen/Main/RepairScreen';
 import FinishRepair from '../screen/Main/FinishRepair';
+import ListRepairScreen from '../screen/Main/ListRepairScreen';
+
 import AddDevice from '../screen/Main/Home/AddDevice/AddDevice'
 import DetailDevice from '../screen/Main/Home/AddDevice/DetailDevice'
 import DetailLamp from '../screen/Main/Home/AddDevice/DetailLamp'
@@ -53,6 +55,13 @@ const Main = createStackNavigator(
           shadowColor: 'transparent',
           borderBottomWidth: 0,
         }
+      })
+    },
+    ListRepairScreen: {
+      screen: ListRepairScreen,
+      navigationOptions: ({ navigation }) => ({
+        headerTintColor: '#000',
+        title: <Text style={{ fontFamily: 'sukhumvit-set-bold', fontSize: 20 }}>รายการแจ้งซ่อม</Text>,
       })
     },
     MainScreenList: {

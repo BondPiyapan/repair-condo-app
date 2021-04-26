@@ -29,6 +29,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment, { locale } from 'moment';
+import firebase from 'firebase'; // 4.8.1
 export default class DetailEngineer extends React.Component {
 
 
@@ -50,7 +51,7 @@ export default class DetailEngineer extends React.Component {
       showDate: false,
       date: null,
       dataRepair: null
-     
+
     }
 
     data = this.props.navigation.getParam('data')
@@ -100,6 +101,18 @@ export default class DetailEngineer extends React.Component {
     })
   }
 
+  onFinish() {
+
+    firebase.database().ref('dataRepair/' + data.idOrder).update(
+      {
+        status: 'finish'
+
+      }).then(
+        alert('สำเร็จ'), this.props.navigation.navigate('MainEngineerScreen')
+      )
+
+  }
+
   render() {
     var radio_props = [
       { label: 'โครงสร้าง', value: 0 },
@@ -109,62 +122,64 @@ export default class DetailEngineer extends React.Component {
       <View style={styles.container}>
         <ScrollView showsVerticalScrollIndicator={true}>
           <View style={{ alignItems: 'center', padding: 20 }}>
-              <View style={{ alignItems: 'center' }}>
-                <Image style={{ width: width * .9, height: hp('28%'), }}
-                  source={{ uri: this.state.dataRepair.img }}
-                />
+            <View style={{ alignItems: 'center' }}>
+              <Image style={{ width: width * .9, height: hp('28%'), }}
+                source={{ uri: this.state.dataRepair.childData.img }}
+              />
+            </View>
+            <View style={{ marginVertical: 20, alignItems: 'center' }}>
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: hp('3%'),
+                  fontFamily: 'sukhumvit-set-bold',
+                }}>{this.state.dataRepair.childData.nameUser}</Text>
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: hp('2.4%'),
+                  fontFamily: 'sukhumvit-set-bold',
+                }}>ห้อง : {this.state.dataRepair.childData.datauser.roomNo}</Text>
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: hp('2.4%'),
+                  fontFamily: 'sukhumvit-set-bold',
+                }}>ชั้น : {this.state.dataRepair.childData.datauser.floor}</Text>
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: hp('2.4%'),
+                  fontFamily: 'sukhumvit-set-bold',
+                }}>ประเภท : {this.state.dataRepair.childData.type}</Text>
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: hp('2.4%'),
+                  fontFamily: 'sukhumvit-set-bold',
+                }}>วันที่เข้าซ่อม : {this.state.dataRepair.childData.dateRepair}</Text>
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: hp('2.4%'),
+                  fontFamily: 'sukhumvit-set-bold',
+                }}>รายละเอียดการซ่อม</Text>
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: hp('2%'),
+                  fontFamily: 'sukhumvit-set',
+                }}>{this.state.dataRepair.childData.reason}</Text>
+            </View>
+            {this.state.dataRepair.childData.status == 'wait' ?
+              <View style={{ marginTop: 20 }}>
+                <TouchableOpacity onPress={() => { this.onFinish() }}
+                  style={[styles.button, styles.buttonMobile]}>
+                  <Text style={styles.buttonText}>ซ่อมเสร็จสิ้น</Text>
+                </TouchableOpacity>
               </View>
-            <View style={{ marginVertical: 20, alignItems:'center' }}>
-            <Text
-              style={{
-                color: '#000',
-                fontSize: hp('3%'),
-                fontFamily: 'sukhumvit-set-bold',
-              }}>{this.state.dataRepair.nameUser}</Text>
-              <Text
-              style={{
-                color: '#000',
-                fontSize: hp('2.4%'),
-                fontFamily: 'sukhumvit-set-bold',
-              }}>ห้อง : {this.state.dataRepair.roomNo}</Text>
-              <Text
-              style={{
-                color: '#000',
-                fontSize: hp('2.4%'),
-                fontFamily: 'sukhumvit-set-bold',
-              }}>ชั้น : {this.state.dataRepair.floor}</Text>
-              <Text
-              style={{
-                color: '#000',
-                fontSize: hp('2.4%'),
-                fontFamily: 'sukhumvit-set-bold',
-              }}>ประเภท : {this.state.dataRepair.type}</Text>
-              <Text
-              style={{
-                color: '#000',
-                fontSize: hp('2.4%'),
-                fontFamily: 'sukhumvit-set-bold',
-              }}>วันที่เข้าซ่อม : {this.state.dataRepair.dateRepair}</Text>
-              <Text
-              style={{
-                color: '#000',
-                fontSize: hp('2.4%'),
-                fontFamily: 'sukhumvit-set-bold',
-              }}>รายละเอียดการซ่อม</Text>
-              <Text
-              style={{
-                color: '#000',
-                fontSize: hp('2%'),
-                fontFamily: 'sukhumvit-set',
-              }}>{this.state.dataRepair.reason}</Text>
-            </View>
-         
-            <View style={{ marginTop: 20 }}>
-              <TouchableOpacity onPress={() => {alert('สำเร็จ'),this.props.navigation.navigate('MainEngineerScreen')}}
-                style={[styles.button, styles.buttonMobile]}>
-                <Text style={styles.buttonText}>ซ่อมเสร็จสิ้น</Text>
-              </TouchableOpacity>
-            </View>
+              :
+              null}
           </View>
         </ScrollView>
       </View>

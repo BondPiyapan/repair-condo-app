@@ -151,10 +151,11 @@ export default class MainScreen extends React.Component {
       if (goals != null) {
         this.setState({
           dataUser: {
-            idUser: 1,
+            uid: goals.uid,
             name: goals.firstName + '  ' + goals.lastName,
-            roomNo: '101',
-            floor: '1',
+            roomNo: goals.roomno,
+            floor: goals.floor,
+            tel: goals.tel
           },
           loader: false
         })
@@ -216,10 +217,14 @@ export default class MainScreen extends React.Component {
                 fontSize: hp('3%'),
                 fontFamily: 'sukhumvit-set-bold',
                 marginTop: 7
-              }}>ห้อง 101 ชั้น 1</Text>
+              }}>ห้อง {this.state.dataUser.roomNo} ชั้น {this.state.dataUser.floor}</Text>
             <TouchableOpacity onPress={() => this.props.navigation.navigate('RepairScreen', { datauser: this.state.dataUser })}
               style={[styles.button, styles.buttonMobile]}>
               <Text style={styles.buttonText}>แจ้งซ่อม</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('ListRepairScreen', { datauser: this.state.dataUser })}
+              style={[styles.button, {backgroundColor: 'green'}]}>
+              <Text style={styles.buttonText}>รายการแจ้งซ่อมของคุณ</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => {this.props.navigation.navigate('Login'),AsyncStorage.setItem('user', JSON.stringify(null));}}
               style={[styles.button, styles.buttonMobile2]}>

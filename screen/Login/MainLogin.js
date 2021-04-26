@@ -53,6 +53,27 @@ export default class MainLogin extends React.Component {
     }
   }
 
+  async retrieveUser(key) {
+    try {
+      const retrievedItem = await AsyncStorage.getItem(key);
+      const item = JSON.parse(retrievedItem);
+      return item;
+    } catch (error) {
+      console.log(error.message);
+    }
+    return
+  }
+
+  async UNSAFE_componentWillMount() {
+
+    this.retrieveUser("user").then(async (goals) => {
+      if(goals != null){
+        this.props.navigation.navigate('Main')
+      }
+    })
+
+  }
+
   async onLogin() {
     try {
       await firebase

@@ -13,7 +13,8 @@ import {
   SafeAreaView,
   Modal,
   ImageBackground,
-  FlatList
+  FlatList,
+  ActivityIndicator
 } from 'react-native';
 import Slider from "react-native-smooth-slider";
 import MapView, { Callout, Marker, Polygon } from 'react-native-maps';
@@ -75,7 +76,10 @@ export default class RepairScreen extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
-    console.log('datauser', datauser)
+    // console.log('datauser', datauser)
+    this.setState({
+      loader: false
+    })
   }
 
   async getPermissionCamera() {
@@ -138,8 +142,72 @@ export default class RepairScreen extends React.Component {
     }
   }
 
-  onSenddata() {
-    // let localUri = this.state.dataImg.uri;
+  async onSenddata() {
+   if(this.state.date != null && this.state.imageReturn != null && this.state.msgReason != ''){
+    try {
+      this.setState({loader: true})
+      const response = await fetch(this.state.imageReturn);
+      const blob = await response.blob();
+      var filename = this.state.imageReturn.split('/').pop()
+      const snap = await firebase.storage().ref().child(filename).put(blob);
+
+      const downloadURL = await snap.ref.getDownloadURL();
+      console.log('downloadURL', downloadURL)
+
+      if (this.state.value == 0) {
+        var typetxt = 'โครงสร้าง'
+      } else if (this.state.value == 1) {
+        var typetxt = 'ทั่วไป'
+      }
+      // firebase.database().ref(datauser.uid).push(
+      //   {
+      //     datauser: datauser,
+      //     img: downloadURL,
+      //     dateRepair: this.state.date,
+      //     type: typetxt,
+      //     reason: this.state.msgReason,
+      //     status: 'wait'
+
+      //   })
+      firebase.database().ref('dataRepair').push(
+        {
+          datauser: datauser,
+          img: downloadURL,
+          dateRepair: this.state.date,
+          type: typetxt,
+          reason: this.state.msgReason,
+          status: 'wait'
+
+        }).then(
+          this.props.navigation.navigate('FinishRepair')
+        )
+
+      return downloadURL;
+
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+   }else{
+     alert('กรุณากรอกข้อมูลให้ครบ')
+   }
+     
+ 
+    // const response = await fetch(this.state.imageReturn);
+    // const blob = await response.blob();
+    // var filename = this.state.imageReturn.split('/').pop()
+    // var ref = firebase.storage().ref().child(filename);
+    // ref.put(blob).then(snap => {
+    //   return snap.ref.getDownloadURL();
+    // })
+    //   .then(downloadURL => {
+    //     return downloadURL;
+    //   })
+    //   .catch(error => {
+    //     console.log(`An error occurred while uploading the file.\n\n${error}`);
+    //   });
+
+    // let localUri = this.state.dataImg.uri; 
     // let filename = localUri.split('/').pop();
     // // console.log('uri', filename)
     // const uri = this.state.dataImg.uri;
@@ -169,26 +237,26 @@ export default class RepairScreen extends React.Component {
     //   }).catch(err => {
     //     Alert.alert("An Error Occured While Uploading")
     //   })
-    if (this.state.date != null) {
-      if (this.state.value == 0) {
-        var typetxt = 'โครงสร้าง'
-      } else if (this.state.value == 1) {
-        var typetxt = 'ทั่วไป'
-      }
-      firebase.database().ref('dataRepair').push(
-        {
-          datauser: datauser,
-          img: 'https://f.ptcdn.info/631/056/000/p5o0qd2ogbTGVDyQoI-o.jpg',
-          dateRepair: this.state.date,
-          type: typetxt,
-          reason: this.state.msgReason,
+    // if (this.state.date != null) {
+    //   if (this.state.value == 0) {
+    //     var typetxt = 'โครงสร้าง'
+    //   } else if (this.state.value == 1) {
+    //     var typetxt = 'ทั่วไป'
+    //   }
+    //   firebase.database().ref('dataRepair').push(
+    //     {
+    //       datauser: datauser,
+    //       img: 'https://f.ptcdn.info/631/056/000/p5o0qd2ogbTGVDyQoI-o.jpg',
+    //       dateRepair: this.state.date,
+    //       type: typetxt,
+    //       reason: this.state.msgReason,
 
-        }).then(
-          this.props.navigation.navigate('FinishRepair')
-        )
-    } else {
-      alert('กรุณากรอกข้อมูลให้ครบ')
-    }
+    //     }).then(
+    //       this.props.navigation.navigate('FinishRepair')
+    //     )
+    // } else {
+    //   alert('กรุณากรอกข้อมูลให้ครบ')
+    // }
 
 
   }
@@ -198,6 +266,13 @@ export default class RepairScreen extends React.Component {
       { label: 'โครงสร้าง', value: 0 },
       { label: 'ทั่วไป', value: 1 }
     ];
+    if(this.state.loader){
+      return(
+        <View style={styles.container}>
+          <ActivityIndicator/>
+        </View>
+      )
+    }
     return (
       <View style={styles.container}>
         <ScrollView showsVerticalScrollIndicator={true}>
@@ -275,6 +350,9 @@ export default class RepairScreen extends React.Component {
             </View>
             <View>
               <TextInput
+                onChangeText={TextInputValue => this.setState({
+                  msgReason: TextInputValue
+                })}
                 style={{ width: width * .8, borderColor: '#000', borderWidth: 1, borderRadius: 10, height: hp('20%'), justifyContent: 'center', fontFamily: 'sukhumvit-set', fontSize: hp('2%') }}
                 multiline={true}
                 placeholder={'  กรอกรายละเอียดการแจ้งซ่อม'}

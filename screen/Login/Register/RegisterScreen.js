@@ -35,10 +35,16 @@ export default class RegisterScreen extends React.Component {
             ErrorFullname: null,
             ErrorPassword: null,
             ErrorEmail: null,
+            ErrorTel: null,
+            ErrorNoRoom: null,
+            ErrorFloor: null,
             TextInputLastname: '',
             TextInputFullname: '',
             TextInputEmail: '',
             TextInputPassword: '',
+            TextInputTel: '',
+            TextInputNoRoom: '',
+            TextInputFloor: '',
         }
 
     }
@@ -74,11 +80,35 @@ export default class RegisterScreen extends React.Component {
         } else {
             this.setState({ TextInputLastname: TextInputValue, ErrorLastname: false });
         }
+    } 
+
+    onEnterTextTel = (TextInputValue) => {
+        if (TextInputValue.trim() != 0) {
+            this.setState({ TextInputTel: TextInputValue, ErrorTel: true });
+        } else {
+            this.setState({ TextInputTel: TextInputValue, ErrorTel: false });
+        }
+    }
+
+    onEnterTextNoRoom = (TextInputValue) => {
+        if (TextInputValue.trim() != 0) {
+            this.setState({ TextInputNoRoom: TextInputValue, ErrorNoRoom: true });
+        } else {
+            this.setState({ TextInputNoRoom: TextInputValue, ErrorNoRoom: false });
+        }
+    }
+
+    onEnterTextFloor = (TextInputValue) => {
+        if (TextInputValue.trim() != 0) {
+            this.setState({ TextInputFloor: TextInputValue, ErrorFloor: true });
+        } else {
+            this.setState({ TextInputFloor: TextInputValue, ErrorFloor: false });
+        }
     }
 
 
     checkDataRegister() {
-        if (this.state.ErrorFullname == true && this.state.ErrorLastname == true && this.state.ErrorEmail == true && this.state.ErrorPassword == true) {
+        if (this.state.ErrorFullname == true && this.state.ErrorLastname == true && this.state.ErrorEmail == true && this.state.ErrorPassword == true && this.state.ErrorTel == true && this.state.ErrorNoRoom == true && this.state.ErrorFloor == true) {
             this.onRegister()
         } else if (this.state.TextInputFullname == '') {
             this.setState({ ErrorFullname: false });
@@ -96,6 +126,18 @@ export default class RegisterScreen extends React.Component {
             this.setState({ ErrorPassword: false });
         } else if (this.state.TextInputPassword != '') {
             this.setState({ ErrorPassword: true });
+        } if (this.state.TextInputNoRoom == '') {
+            this.setState({ ErrorNoRoom: false });
+        } else if (this.state.TextInputNoRoom != '') {
+            this.setState({ ErrorNoRoom: true });
+        } if (this.state.TextInputFloor == '') {
+            this.setState({ ErrorFloor: false });
+        } else if (this.state.TextInputFloor != '') {
+            this.setState({ ErrorFloor: true });
+        } if (this.state.TextInputTel == '') {
+            this.setState({ ErrorTel: false });
+        } else if (this.state.TextInputTel != '') {
+            this.setState({ ErrorTel: true });
         }
     }
 
@@ -112,9 +154,14 @@ export default class RegisterScreen extends React.Component {
             db.collection("users")
                 .doc(currentUser.uid)
                 .set({
+                    uid: currentUser.uid,
                     email: currentUser.email,
-                    lastName: this.state.TextInputLastname,
                     firstName: this.state.TextInputFullname,
+                    lastName: this.state.TextInputLastname,
+                    tel: this.state.TextInputTel,
+                    roomno: this.state.TextInputNoRoom,
+                    floor: this.state.TextInputFloor
+                    
                 }).then(
                     Alert.alert("แจ้งเตือน", "สมัครสมาชิกเรียบร้อย"),
                     this.props.navigation.goBack(null)
@@ -131,11 +178,14 @@ export default class RegisterScreen extends React.Component {
 
         return (
             <View style={styles.container}>
-                <ScrollView>
-                    <KeyboardAvoidingView behavior="padding" style={{
+                 <KeyboardAvoidingView behavior="padding" 
+                 keyboardVerticalOffset={30}
+                 style={{
                         flex: 1,
                         justifyContent: 'space-between',
                     }}>
+                <ScrollView>
+                   
                         <View style={{ padding: 40 }}>
 
                             <View style={{ marginBottom: 20 }}>
@@ -225,10 +275,53 @@ export default class RegisterScreen extends React.Component {
                                 }
 
                                 <TextInput
-                                    onChangeText={TextInputValue => this.onEnterTextLastname(TextInputValue)}
+                                    onChangeText={TextInputValue => this.onEnterTextTel(TextInputValue)}
                                     placeholder={'กรอกเบอร์โทรศัพท์ของคุณ'}
                                     style={{ padding: -10, fontFamily: 'sukhumvit-set', }}
                                     underlineColorAndroid={'transparent'}
+                                    keyboardType={'number-pad'}
+                                    numberOfLines={1}
+                                />
+
+                                <View style={{ height: 1, backgroundColor: '#CED7DE', marginTop: 10, marginBottom: 10 }} />
+                            </View>
+
+                            <View style={{ marginBottom: 20 }}>
+                                {this.state.ErrorNoRoom == false ? (
+                                    <Text style={styles.errorMessage}>
+                                        หมายเลขห้อง
+                                    </Text>
+                                ) :
+                                    <Text style={styles.headText}>หมายเลขห้อง</Text>
+                                }
+
+                                <TextInput
+                                    onChangeText={TextInputValue => this.onEnterTextNoRoom(TextInputValue)}
+                                    placeholder={'กรอกหมายเลขห้องของคุณ'}
+                                    style={{ padding: -10, fontFamily: 'sukhumvit-set', }}
+                                    underlineColorAndroid={'transparent'}
+                                    keyboardType={'number-pad'}
+                                    numberOfLines={1}
+                                />
+
+                                <View style={{ height: 1, backgroundColor: '#CED7DE', marginTop: 10, marginBottom: 10 }} />
+                            </View>
+
+                            <View style={{ marginBottom: 20 }}>
+                                {this.state.ErrorFloor == false ? (
+                                    <Text style={styles.errorMessage}>
+                                        ชั้น
+                                    </Text>
+                                ) :
+                                    <Text style={styles.headText}>ชั้น</Text>
+                                }
+
+                                <TextInput
+                                    onChangeText={TextInputValue => this.onEnterTextFloor(TextInputValue)}
+                                    placeholder={'กรอกชั้นของคุณ'}
+                                    style={{ padding: -10, fontFamily: 'sukhumvit-set', }}
+                                    underlineColorAndroid={'transparent'}
+                                    keyboardType={'number-pad'}
                                     numberOfLines={1}
                                 />
 
@@ -243,8 +336,9 @@ export default class RegisterScreen extends React.Component {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    </KeyboardAvoidingView>
+                    
                 </ScrollView>
+                </KeyboardAvoidingView>
             </View>
         );
     }
